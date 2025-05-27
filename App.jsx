@@ -1,8 +1,10 @@
+import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useCallback } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import RootNavigator from "./app/RootNavigator";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -28,8 +30,10 @@ export default function App() {
 
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
-      <Text style={styles.containerText}>App</Text>
-      <StatusBar style="auto" />
+      <NavigationContainer>
+        <StatusBar style="auto" />
+        <RootNavigator />
+      </NavigationContainer>
     </View>
   );
 }
@@ -38,13 +42,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#E8F9FF",
-    width: "100%",
-    height: "100%",
-  },
-  containerText: {
-    margin: 40,
-    textAlign: "center",
-    fontSize: 20,
-    fontFamily: "Montserrat-Medium"
   },
 });
