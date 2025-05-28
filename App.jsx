@@ -1,10 +1,12 @@
+import NetInfo from "@react-native-community/netinfo";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import RootNavigator from "./app/RootNavigator";
+import NoInternetScreen from "./app/screens/NoInternet";
 import { ThemeProvider } from "./app/utils/theme";
 
 SplashScreen.preventAutoHideAsync();
@@ -21,6 +23,16 @@ export default function App() {
     "Quicksand-Bold": require("./assets/fonts/Quicksand-Bold.ttf"),
   });
 
+  const [isConnected, setIsConnected] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsConnected(state.isConnected && state.isInternetReachable);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
@@ -34,7 +46,7 @@ export default function App() {
       <View style={styles.container} onLayout={onLayoutRootView}>
         <NavigationContainer>
           <StatusBar style="auto" />
-          <RootNavigator />
+          { isConnected ? <RootNavigator /> : <NoInternetScreen />}
         </NavigationContainer>
       </View>
     </ThemeProvider>
