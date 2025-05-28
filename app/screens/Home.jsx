@@ -1,9 +1,21 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import BookList from "../components/BookList";
+import { useTheme } from "../utils/theme";
 
 export default function Home() {
+  const { currentTheme } = useTheme();
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Home Screen</Text>
+    <View
+      style={[styles.container, { backgroundColor: currentTheme.background }]}
+    >
+      <View style={{ marginTop: 20 }}>
+        <ScrollView>
+          <BookList title={`History`} />
+          <BookList title={`Trending`} />
+          <BookList title={`Recommended`} />
+        </ScrollView>
+      </View>
     </View>
   );
 }
@@ -11,12 +23,6 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E8F9FF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  text: {
-    fontSize: 24,
-    color: "#333",
+    padding: 20,
   },
 });
