@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -20,6 +20,8 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [locked, setLocked] = useState(false);
 
   const { currentTheme } = useTheme();
 
@@ -27,12 +29,16 @@ export default function LoginForm() {
     checkAuthentication();
   }, []);
 
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
   const checkAuthentication = async () => {
     try {
-      const token = await AsyncStorage.getItem("authToken");
+      const token = await SecureStore.getItemAsync("authToken");
       if (token) {
-        // Optionally validate token with backend
-        navigation.reset({ index: 0, routes: [{ name: "Main" }] });
+        navigation.navigate("Main");
       }
     } catch (err) {
       console.error("Auth check error:", err);
@@ -40,8 +46,18 @@ export default function LoginForm() {
   };
 
   const handleLogin = async () => {
+    if (locked) {
+      setError("Too many attempts. Try again after 30 seconds.");
+      return;
+    }
+
     if (!email || !password) {
       setError("Please fill all fields");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError("Enter a valid email address");
       return;
     }
 
@@ -54,24 +70,45 @@ export default function LoginForm() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ email: email.toLowerCase(), password }),
+          credentials: 'include'
         }
       );
 
       const data = await response.json();
 
+      console.log("Login response status:", response.status);
+      console.log("Login response data:", data);
+
       if (!response.ok) {
-        const msg = data?.message || "Login failed";
-        setError(msg);
+        setLoginAttempts((prev) => {
+          const newCount = prev + 1;
+          if (newCount >= 5) {
+            setLocked(true);
+            setTimeout(() => {
+              setLocked(false);
+              setLoginAttempts(0);
+            }, 30000);
+          }
+          return newCount;
+        });
+
+        setError(data?.message || "Login failed");
         setLoading(false);
         return;
       }
 
-      // Store token
-      await AsyncStorage.setItem("authToken", data.token);
+      // Support token from various fields or nested properties
+      const token = data.token || data.accessToken || (data.data && data.data.token);
 
-      // Navigate to Main screen
-      navigation.reset({ index: 0, routes: [{ name: "Main" }] });
+      if (!token) {
+        setError("Login failed: no token received");
+        setLoading(false);
+        return;
+      }
+
+      await SecureStore.setItemAsync("authToken", token);
+      navigation.navigate("Main");
     } catch (err) {
       console.error("Login error:", err);
       setError("Network error. Please try again.");
@@ -134,10 +171,9 @@ export default function LoginForm() {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-        <Text style={styles.registerText}>
-          Don&apos;t have an account? Register
-        </Text>
+        <Text style={styles.registerText}>Don&apos;t have an account? Register</Text>
       </TouchableOpacity>
+
       <TouchableOpacity onPress={() => navigation.navigate("Forgot")}>
         <Text style={styles.registerText}>Forgot Password?</Text>
       </TouchableOpacity>
@@ -166,7 +202,6 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     height: 50,
-    backgroundColor: "#F1F1F1",
     borderRadius: 12,
     paddingHorizontal: 15,
     marginBottom: 15,
@@ -176,7 +211,6 @@ const styles = StyleSheet.create({
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F1F1F1",
     borderRadius: 12,
     paddingHorizontal: 15,
     height: 50,

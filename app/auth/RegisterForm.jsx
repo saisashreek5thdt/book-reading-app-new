@@ -67,7 +67,7 @@ export default function RegisterForm() {
       }
 
       // Registration successful
-      navigation.navigate("Home");
+      navigation.navigate("Main");
     } catch (err) {
       setError(err.message);
     } finally {
