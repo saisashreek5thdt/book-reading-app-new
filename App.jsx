@@ -5,6 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import RootNavigator from "./app/RootNavigator";
+import { ThemeProvider } from "./app/utils/theme";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,12 +30,14 @@ export default function App() {
   if (!fontsLoaded) return null;
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <NavigationContainer>
-        <StatusBar style="auto" />
-        <RootNavigator />
-      </NavigationContainer>
-    </View>
+    <ThemeProvider>
+      <View style={styles.container} onLayout={onLayoutRootView}>
+        <NavigationContainer>
+          <StatusBar style="auto" />
+          <RootNavigator />
+        </NavigationContainer>
+      </View>
+    </ThemeProvider>
   );
 }
 
