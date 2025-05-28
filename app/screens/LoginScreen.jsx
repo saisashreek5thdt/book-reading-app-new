@@ -1,9 +1,11 @@
 import { Image, StyleSheet, View } from "react-native";
 import LoginForm from "../auth/LoginForm";
+import { useTheme } from "../utils/theme";
 
 export default function LoginScreen() {
+  const { currentTheme } = useTheme();
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: currentTheme.background} ]}>
       <Image
         source={require("../../assets/images/book.jpg")}
         style={styles.image}
@@ -16,7 +18,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#A1E3F9",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
