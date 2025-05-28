@@ -1,0 +1,21 @@
+export default {
+    lightBG: "#E8F9FF",
+    darkBG: "#222831",
+    textLight: "#4F4F4F",
+    textDark: "#EEEEEE",
+    PRIMARY: "#F26B0F",
+    WHITE: "#EEEEEE",
+    BLACK: "#1D1616",
+    formLightBG: "#FFF",
+    formDarkBG: "#000",
+    formInputLight: "#F1F1F1",
+    formInputDark: "#F1F1F1",
+    formLightTitle: "#222831",
+    formDarkTitle: "#F1F1F1",
+    tabLightBG: "#CAF4FF",
+    tabDarkBG: "#000",
+    tabActiveLight: "#F26B0F",
+    tabActiveDark: "#F26B0F",
+    tabInActiveLight: "#000",
+    tabInActiveDark: "#F1F1F1"
+}
