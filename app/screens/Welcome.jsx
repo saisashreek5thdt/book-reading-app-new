@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function Welcome({ navigation }) {
   const handleGetStarted = async () => {
-    await AsyncStorage.setItem("hasSeenWelcome", "true");
+    await AsyncStorage.setItem("hasSeenWelcome", "false");
     navigation.replace("Login");
   };
 

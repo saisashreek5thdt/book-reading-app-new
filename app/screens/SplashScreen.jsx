@@ -11,7 +11,7 @@ export default function SplashScreen({ navigation }) {
 
       if (isLoggedIn === "true") {
         navigation.replace("Home");
-      } else if (hasSeenWelcome === "true") {
+      } else if (hasSeenWelcome === "false") {
         navigation.replace("Login");
       } else {
         navigation.replace("Welcome");
