@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
   },
   title: {
+    fontFamily: "Montserrat-Medium",
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
@@ -106,6 +107,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
+    fontFamily: "Montserrat-Medium"
   },
   passwordContainer: {
     flexDirection: "row",
@@ -119,11 +121,13 @@ const styles = StyleSheet.create({
   passwordInput: {
     flex: 1,
     fontSize: 16,
+    fontFamily: "Montserrat-Medium"
   },
   errorText: {
     color: "red",
     marginBottom: 10,
     textAlign: "center",
+    fontFamily: "Montserrat-Medium"
   },
   button: {
     backgroundColor: "#57C5B6",
@@ -136,11 +140,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: "Montserrat-Medium"
   },
   registerText: {
     color: "#1E90FF",
     fontSize: 14,
     textAlign: "center",
     marginTop: 10,
+    fontFamily: "Montserrat-Medium"
   },
 });

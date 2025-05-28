@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import {
   StyleSheet,
@@ -8,6 +9,7 @@ import {
 } from "react-native";
 
 export default function ForgotForm() {
+  const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
 
@@ -39,6 +41,11 @@ export default function ForgotForm() {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Forgot Password</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+        <Text style={styles.registerText}>
+          Have an account? Login
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -56,6 +63,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
   },
   title: {
+    fontFamily: "Montserrat-Medium",
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
@@ -70,6 +78,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
+    fontFamily: "Montserrat-Medium"
   },
   button: {
     backgroundColor: "#57C5B6",
@@ -82,5 +91,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: "Montserrat-Medium"
+  },
+  registerText: {
+    color: "#1E90FF",
+    fontSize: 14,
+    textAlign: "center",
+    marginTop: 5,
+    fontFamily: "Montserrat-Medium"
   },
 });

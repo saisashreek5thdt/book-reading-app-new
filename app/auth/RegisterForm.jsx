@@ -14,6 +14,7 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -21,7 +22,7 @@ export default function RegisterForm() {
 
   const handleRegister = () => {
     // Basic validations
-    if (!fullName || !email || !password || !confirmPassword) {
+    if (!fullName || !email || !password || !confirmPassword || !phone) {
       setError("Please fill in all fields");
       return;
     }
@@ -59,6 +60,15 @@ export default function RegisterForm() {
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
+        autoCapitalize="none"
+      />
+
+      <TextInput
+        placeholder="Phone"
+        style={styles.input}
+        value={phone}
+        onChangeText={setPhone}
+        keyboardType="phone-pad"
         autoCapitalize="none"
       />
 
@@ -127,6 +137,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
   },
   title: {
+    fontFamily: "Montserrat-Medium",
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
@@ -141,6 +152,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
+    fontFamily: "Montserrat-Medium"
   },
   passwordContainer: {
     flexDirection: "row",
@@ -154,11 +166,13 @@ const styles = StyleSheet.create({
   passwordInput: {
     flex: 1,
     fontSize: 16,
+    fontFamily: "Montserrat-Medium"
   },
   errorText: {
     color: "red",
     textAlign: "center",
     marginBottom: 10,
+    fontFamily: "Montserrat-Medium"
   },
   button: {
     backgroundColor: "#57C5B6",
@@ -171,11 +185,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: "Montserrat-Medium"
   },
   registerText: {
     color: "#1E90FF",
     fontSize: 14,
     textAlign: "center",
     marginTop: 10,
+    fontFamily: "Montserrat-Medium"
   },
 });
