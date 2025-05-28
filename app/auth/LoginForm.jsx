@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTheme } from "../utils/theme";
 
 export default function LoginForm() {
   const navigation = useNavigation();
@@ -16,6 +17,8 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
+  const { currentTheme } = useTheme();
+
   const handleLogin = () => {
     // Demo: basic hardcoded login check
     const validEmail = "user@example.com";
@@ -23,28 +26,37 @@ export default function LoginForm() {
 
     if (email === validEmail && password === validPassword) {
       setError("");
-      navigation.navigate("Home");
+      navigation.navigate("Main");
     } else {
       setError("Invalid email or password");
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+    <View style={[styles.container, { backgroundColor: currentTheme.formBG }]}>
+      <Text style={[styles.title, { color: currentTheme.formTitle }]}>
+        Login
+      </Text>
 
       <TextInput
         placeholder="Email"
-        style={styles.input}
+        placeholderTextColor={ currentTheme.formTitle }
+        style={[styles.input, { backgroundColor: currentTheme.background }]}
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
 
-      <View style={styles.passwordContainer}>
+      <View
+        style={[
+          styles.passwordContainer,
+          { backgroundColor: currentTheme.background },
+        ]}
+      >
         <TextInput
           placeholder="Password"
+          placeholderTextColor={ currentTheme.formTitle }
           style={styles.passwordInput}
           value={password}
           onChangeText={setPassword}
@@ -54,7 +66,7 @@ export default function LoginForm() {
           <Ionicons
             name={showPassword ? "eye-off" : "eye"}
             size={22}
-            color="#888"
+            color={currentTheme.formTitle}
           />
         </TouchableOpacity>
       </View>
@@ -71,9 +83,7 @@ export default function LoginForm() {
         </Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("Forgot")}>
-        <Text style={styles.registerText}>
-          Forgot Password?
-        </Text>
+        <Text style={styles.registerText}>Forgot Password?</Text>
       </TouchableOpacity>
     </View>
   );
@@ -82,7 +92,6 @@ export default function LoginForm() {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 20,
     elevation: 5,
@@ -96,7 +105,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    color: "#333",
     textAlign: "center",
   },
   input: {
@@ -107,7 +115,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
-    fontFamily: "Montserrat-Medium"
+    fontFamily: "Montserrat-Medium",
   },
   passwordContainer: {
     flexDirection: "row",
@@ -121,13 +129,13 @@ const styles = StyleSheet.create({
   passwordInput: {
     flex: 1,
     fontSize: 16,
-    fontFamily: "Montserrat-Medium"
+    fontFamily: "Montserrat-Medium",
   },
   errorText: {
     color: "red",
     marginBottom: 10,
     textAlign: "center",
-    fontFamily: "Montserrat-Medium"
+    fontFamily: "Montserrat-Medium",
   },
   button: {
     backgroundColor: "#57C5B6",
@@ -140,13 +148,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
-    fontFamily: "Montserrat-Medium"
+    fontFamily: "Montserrat-Medium",
   },
   registerText: {
     color: "#1E90FF",
     fontSize: 14,
     textAlign: "center",
     marginTop: 10,
-    fontFamily: "Montserrat-Medium"
+    fontFamily: "Montserrat-Medium",
   },
 });
