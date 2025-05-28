@@ -19,8 +19,9 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     // Basic validations
     if (!fullName || !email || !password || !confirmPassword || !phone) {
       setError("Please fill in all fields");
@@ -37,10 +38,41 @@ export default function RegisterForm() {
       return;
     }
 
-    // Simulate registration success
-    console.log("Registered:", fullName, email);
+    setLoading(true);
     setError("");
-    navigation.navigate("Home");
+
+    try {
+      const response = await fetch(
+        "https://book-reading-app-api-o9ts.vercel.app/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fullName,
+            email,
+            phone,
+            password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Registration failed. Please try again."
+        );
+      }
+
+      // Registration successful
+      navigation.navigate("Home");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -110,8 +142,14 @@ export default function RegisterForm() {
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
+      <TouchableOpacity
+        style={[styles.button, loading && { opacity: 0.5 }]}
+        onPress={handleRegister}
+        disabled={loading}
+      >
+        <Text style={styles.buttonText}>
+          {loading ? "Registering..." : "Register"}
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("Login")}>
@@ -152,7 +190,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
-    fontFamily: "Montserrat-Medium"
+    fontFamily: "Montserrat-Medium",
   },
   passwordContainer: {
     flexDirection: "row",
@@ -166,13 +204,13 @@ const styles = StyleSheet.create({
   passwordInput: {
     flex: 1,
     fontSize: 16,
-    fontFamily: "Montserrat-Medium"
+    fontFamily: "Montserrat-Medium",
   },
   errorText: {
     color: "red",
     textAlign: "center",
     marginBottom: 10,
-    fontFamily: "Montserrat-Medium"
+    fontFamily: "Montserrat-Medium",
   },
   button: {
     backgroundColor: "#57C5B6",
@@ -185,13 +223,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
-    fontFamily: "Montserrat-Medium"
+    fontFamily: "Montserrat-Medium",
   },
   registerText: {
     color: "#1E90FF",
     fontSize: 14,
     textAlign: "center",
     marginTop: 10,
-    fontFamily: "Montserrat-Medium"
+    fontFamily: "Montserrat-Medium",
   },
 });

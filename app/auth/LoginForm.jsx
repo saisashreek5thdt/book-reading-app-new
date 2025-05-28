@@ -1,7 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TextInput,
@@ -16,19 +19,64 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { currentTheme } = useTheme();
 
-  const handleLogin = () => {
-    // Demo: basic hardcoded login check
-    const validEmail = "user@example.com";
-    const validPassword = "password123";
+  useEffect(() => {
+    checkAuthentication();
+  }, []);
 
-    if (email === validEmail && password === validPassword) {
-      setError("");
-      navigation.navigate("Main");
-    } else {
-      setError("Invalid email or password");
+  const checkAuthentication = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      if (token) {
+        // Optionally validate token with backend
+        navigation.reset({ index: 0, routes: [{ name: "Main" }] });
+      }
+    } catch (err) {
+      console.error("Auth check error:", err);
+    }
+  };
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setError("Please fill all fields");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch(
+        "https://book-reading-app-api-o9ts.vercel.app/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const msg = data?.message || "Login failed";
+        setError(msg);
+        setLoading(false);
+        return;
+      }
+
+      // Store token
+      await AsyncStorage.setItem("authToken", data.token);
+
+      // Navigate to Main screen
+      navigation.reset({ index: 0, routes: [{ name: "Main" }] });
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,7 +88,7 @@ export default function LoginForm() {
 
       <TextInput
         placeholder="Email"
-        placeholderTextColor={ currentTheme.formTitle }
+        placeholderTextColor={currentTheme.formTitle}
         style={[styles.input, { backgroundColor: currentTheme.background }]}
         value={email}
         onChangeText={setEmail}
@@ -56,7 +104,7 @@ export default function LoginForm() {
       >
         <TextInput
           placeholder="Password"
-          placeholderTextColor={ currentTheme.formTitle }
+          placeholderTextColor={currentTheme.formTitle}
           style={styles.passwordInput}
           value={password}
           onChangeText={setPassword}
@@ -73,8 +121,16 @@ export default function LoginForm() {
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleLogin}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Login</Text>
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("Register")}>
