@@ -1,16 +1,16 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import {
-    Linking,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Linking,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function NoInternetScreen() {
   return (
     <View style={styles.container}>
-      <Ionicons name="wifi-off" size={80} color="#666" />
+      <Feather name="wifi-off" size={80} color="#666" />
       <Text style={styles.title}>No Internet Connection</Text>
       <Text style={styles.subtitle}>
         Please enable Wi-Fi or Mobile Data to continue.
