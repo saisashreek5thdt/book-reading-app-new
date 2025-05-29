@@ -99,16 +99,19 @@ export default function LoginForm() {
       }
 
       // Support token from various fields or nested properties
-      const token = data.token || data.accessToken || (data.data && data.data.token);
+    
+const token = data.token;
 
       if (!token) {
-        setError("Login failed: no token received");
-        setLoading(false);
-        return;
+        // Cookie-based login: redirect without storing token locally
+        navigation.navigate("Main");
+      } else {
+        await SecureStore.setItemAsync("authToken", token);
+        navigation.navigate("Main");
       }
 
-      await SecureStore.setItemAsync("authToken", token);
-      navigation.navigate("Main");
+// Redirect regardless (session already set via cookie)
+navigation.navigate("Main");
     } catch (err) {
       console.error("Login error:", err);
       setError("Network error. Please try again.");

@@ -52,7 +52,7 @@ export default function RegisterForm() {
           body: JSON.stringify({
             fullName,
             email,
-            phone,
+            mobile:phone,
             password,
           }),
         }
