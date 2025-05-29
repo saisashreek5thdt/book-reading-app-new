@@ -106,7 +106,7 @@ export default function LoginForm() {
       // ✅ DO NOT navigate manually
       // authToken will be picked up by your AuthContext + RootNavigator
       await login(token);
-      navigation.replace("Main");
+      navigation.replace("Main");  
     } catch (err) {
       console.error("Login error:", err);
       setError("Network error. Please try again.");
