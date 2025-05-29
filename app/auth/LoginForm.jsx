@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+ 
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
@@ -11,9 +11,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAuth } from '../context/AuthContext';
 import { useTheme } from "../utils/theme";
 
 export default function LoginForm() {
+   const {login}=useAuth();
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,22 +31,19 @@ export default function LoginForm() {
     checkAuthentication();
   }, []);
 
-  const validateEmail = (email) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
-
   const checkAuthentication = async () => {
     try {
       const token = await SecureStore.getItemAsync("authToken");
       if (token) {
-        navigation.navigate("Main");
+        // DO NOT navigate manually here — let auth context handle it
+        console.log("Already authenticated");
       }
     } catch (err) {
       console.error("Auth check error:", err);
     }
   };
 
+ 
   const handleLogin = async () => {
     if (locked) {
       setError("Too many attempts. Try again after 30 seconds.");
@@ -56,24 +55,20 @@ export default function LoginForm() {
       return;
     }
 
-    if (!validateEmail(email)) {
-      setError("Enter a valid email address");
-      return;
-    }
-
     setLoading(true);
     setError("");
 
     try {
-      const response = await fetch(
-        "https://book-reading-app-api-o9ts.vercel.app/api/auth/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: email.toLowerCase(), password }),
-          credentials: 'include'
-        }
-      );
+      const response = await fetch("https://book-reading-app-api-o9ts.vercel.app/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email, // don't lowercase here unless backend normalizes too
+          password,
+        }),
+      });
 
       const data = await response.json();
 
@@ -93,25 +88,25 @@ export default function LoginForm() {
           return newCount;
         });
 
-        setError(data?.message || "Login failed");
+        setError(data?.error || data?.message || "Login failed");
         setLoading(false);
         return;
       }
 
-      // Support token from various fields or nested properties
-    
-const token = data.token;
+      const token = data.token;
 
       if (!token) {
-        // Cookie-based login: redirect without storing token locally
-        navigation.navigate("Main");
-      } else {
-        await SecureStore.setItemAsync("authToken", token);
-        navigation.navigate("Main");
+        setError("Login failed: no token received");
+        setLoading(false);
+        return;
       }
 
-// Redirect regardless (session already set via cookie)
-navigation.navigate("Main");
+      await SecureStore.setItemAsync("authToken", token);
+
+      // ✅ DO NOT navigate manually
+      // authToken will be picked up by your AuthContext + RootNavigator
+      await login(token);
+      navigation.replace("Main");
     } catch (err) {
       console.error("Login error:", err);
       setError("Network error. Please try again.");
@@ -122,9 +117,7 @@ navigation.navigate("Main");
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.formBG }]}>
-      <Text style={[styles.title, { color: currentTheme.formTitle }]}>
-        Login
-      </Text>
+      <Text style={[styles.title, { color: currentTheme.formTitle }]}>Login</Text>
 
       <TextInput
         placeholder="Email"
@@ -136,12 +129,7 @@ navigation.navigate("Main");
         autoCapitalize="none"
       />
 
-      <View
-        style={[
-          styles.passwordContainer,
-          { backgroundColor: currentTheme.background },
-        ]}
-      >
+      <View style={[styles.passwordContainer, { backgroundColor: currentTheme.background }]}>
         <TextInput
           placeholder="Password"
           placeholderTextColor={currentTheme.formTitle}
@@ -174,7 +162,7 @@ navigation.navigate("Main");
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-        <Text style={styles.registerText}>Don&apos;t have an account? Register</Text>
+        <Text style={styles.registerText}>Don't have an account? Register</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("Forgot")}>
