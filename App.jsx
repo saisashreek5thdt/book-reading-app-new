@@ -5,6 +5,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
+import { AuthProvider } from "./app/context/AuthContext";
 import RootNavigator from "./app/RootNavigator";
 import NoInternetScreen from "./app/screens/NoInternet";
 import { ThemeProvider } from "./app/utils/theme";
@@ -43,12 +44,14 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <View style={styles.container} onLayout={onLayoutRootView}>
-        <NavigationContainer>
-          <StatusBar style="auto" />
-          { isConnected ? <RootNavigator /> : <NoInternetScreen />}
-        </NavigationContainer>
-      </View>
+      <AuthProvider>
+        <View style={styles.container} onLayout={onLayoutRootView}>
+          <NavigationContainer>
+            <StatusBar style="auto" />
+            {isConnected ? <RootNavigator /> : <NoInternetScreen />}
+          </NavigationContainer>
+        </View>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

@@ -14,12 +14,14 @@ import Welcome from "./screens/Welcome";
 import colors from "./utils/colors";
 import { useTheme } from "./utils/theme";
 
+import { ActivityIndicator, View } from "react-native";
+import { useAuth } from "./context/AuthContext";
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function Tabs() {
-
-   const { currentTheme, theme } = useTheme();
+  const { currentTheme, theme } = useTheme();
 
   return (
     <Tab.Navigator
@@ -32,8 +34,10 @@ function Tabs() {
           height: 80,
           paddingTop: 4,
         },
-        tabBarActiveTintColor: theme === "dark" ? currentTheme.tabActive : colors.PRIMARY,
-        tabBarInactiveTintColor: theme === "dark" ? currentTheme.tabInActive : colors.tabDarkBG,
+        tabBarActiveTintColor:
+          theme === "dark" ? currentTheme.tabActive : colors.PRIMARY,
+        tabBarInactiveTintColor:
+          theme === "dark" ? currentTheme.tabInActive : colors.tabDarkBG,
         tabBarLabelStyle: {
           fontFamily: "Quicksand-Medium",
           fontSize: 12,
@@ -84,23 +88,36 @@ function Tabs() {
 }
 
 export default function RootNavigator() {
+  const { authToken, checkingAuth } = useAuth();
+
+  if (checkingAuth) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   return (
     <Stack.Navigator
       initialRouteName="Splash"
       screenOptions={{ headerShown: false }}
     >
-      {/* Bottom Tabs */}
-      <Stack.Screen
-        name="Main"
-        component={Tabs}
-        options={{ headerShown: false }}
-      />
-
-      <Stack.Screen name="Splash" component={SplashScreen} />
-      <Stack.Screen name="Welcome" component={Welcome} />
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="Forgot" component={ForgotScreen} />
+      {!authToken ? (
+        <>
+          <Stack.Screen name="Splash" component={SplashScreen} />
+          <Stack.Screen name="Welcome" component={Welcome} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="Forgot" component={ForgotScreen} />
+        </>
+      ) : (
+        <Stack.Screen
+          name="Main"
+          component={Tabs}
+          options={{ headerShown: false }}
+        />
+      )}
     </Stack.Navigator>
   );
 }
