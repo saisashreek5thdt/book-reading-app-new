@@ -1,4 +1,3 @@
- 
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
@@ -11,11 +10,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../utils/theme";
 
+// 🔁 Use a valid backend URL here or switch to mock mode
+const API_URL = "https://book-reading-app-api-o9ts.vercel.app/api/auth/login";  // Replace if needed
+
 export default function LoginForm() {
-   const {login}=useAuth();
+  const { login } = useAuth();
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,6 +29,8 @@ export default function LoginForm() {
 
   const { currentTheme } = useTheme();
 
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
   useEffect(() => {
     checkAuthentication();
   }, []);
@@ -34,16 +38,15 @@ export default function LoginForm() {
   const checkAuthentication = async () => {
     try {
       const token = await SecureStore.getItemAsync("authToken");
-      if (token) {
-        // DO NOT navigate manually here — let auth context handle it
-        console.log("Already authenticated");
+      if (token && !isRedirecting) {
+        setIsRedirecting(true);
+        navigation.replace("Main");
       }
     } catch (err) {
       console.error("Auth check error:", err);
     }
   };
 
- 
   const handleLogin = async () => {
     if (locked) {
       setError("Too many attempts. Try again after 30 seconds.");
@@ -59,21 +62,15 @@ export default function LoginForm() {
     setError("");
 
     try {
-      const response = await fetch("https://book-reading-app-api-o9ts.vercel.app/api/auth/login", {
+      const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email, // don't lowercase here unless backend normalizes too
-          password,
-        }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
-
-      console.log("Login response status:", response.status);
-      console.log("Login response data:", data);
 
       if (!response.ok) {
         setLoginAttempts((prev) => {
@@ -93,20 +90,17 @@ export default function LoginForm() {
         return;
       }
 
-      const token = data.token;
+      const { token, user } = data;
 
-      if (!token) {
-        setError("Login failed: no token received");
+      if (!token || !user) {
+        setError("Login failed: no token or user data received");
         setLoading(false);
         return;
       }
 
-      await SecureStore.setItemAsync("authToken", token);
+      await login(token, user); // ✅ Handles both SecureStore and state
+      navigation.replace("Main");
 
-      // ✅ DO NOT navigate manually
-      // authToken will be picked up by your AuthContext + RootNavigator
-      await login(token);
-      navigation.replace("Main");  
     } catch (err) {
       console.error("Login error:", err);
       setError("Network error. Please try again.");
@@ -114,6 +108,16 @@ export default function LoginForm() {
       setLoading(false);
     }
   };
+
+  // Prevent rendering form if already authenticated
+  if (isRedirecting) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#57C5B6" />
+        <Text style={{ marginTop: 10, color: "#57C5B6" }}>Redirecting...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.formBG }]}>
@@ -170,7 +174,7 @@ export default function LoginForm() {
       </TouchableOpacity>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -237,5 +241,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
     fontFamily: "Montserrat-Medium",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

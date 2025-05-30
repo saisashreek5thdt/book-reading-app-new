@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAuth } from "../context/AuthContext"; // Import Auth hook
 
 export default function RegisterForm() {
   const navigation = useNavigation();
@@ -21,18 +22,17 @@ export default function RegisterForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const { login } = useAuth(); // Use login from context
+
   const handleRegister = async () => {
-    // Basic validations
     if (!fullName || !email || !password || !confirmPassword || !phone) {
       setError("Please fill in all fields");
       return;
     }
-
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-
     if (password.length < 6) {
       setError("Password must be at least 6 characters");
       return;
@@ -43,7 +43,7 @@ export default function RegisterForm() {
 
     try {
       const response = await fetch(
-        "https://book-reading-app-api-o9ts.vercel.app/api/auth/register",
+        "https://book-reading-app-api-o9ts.vercel.app/api/auth/register", 
         {
           method: "POST",
           headers: {
@@ -52,7 +52,7 @@ export default function RegisterForm() {
           body: JSON.stringify({
             fullName,
             email,
-            mobile:phone,
+            mobile: phone,
             password,
           }),
         }
@@ -61,13 +61,19 @@ export default function RegisterForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message || "Registration failed. Please try again."
-        );
+        throw new Error(data.message || "Registration failed. Please try again.");
       }
 
-      // Registration successful
-      navigation.navigate("Main");
+      // ✅ Extract token and user from backend
+      const token = "mock_token_123"; // Replace with real JWT if backend provides it
+      const userData = data.user; // { id, fullName, email, mobile }
+
+      // ✅ Save to auth context
+      await login(token, userData); // This persists token/user and updates state
+
+      // ✅ Navigate to main screen
+      navigation.replace("Main");
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -78,14 +84,12 @@ export default function RegisterForm() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Register</Text>
-
       <TextInput
         placeholder="Full Name"
         style={styles.input}
         value={fullName}
         onChangeText={setFullName}
       />
-
       <TextInput
         placeholder="Email"
         style={styles.input}
@@ -94,7 +98,6 @@ export default function RegisterForm() {
         keyboardType="email-address"
         autoCapitalize="none"
       />
-
       <TextInput
         placeholder="Phone"
         style={styles.input}
@@ -103,7 +106,6 @@ export default function RegisterForm() {
         keyboardType="phone-pad"
         autoCapitalize="none"
       />
-
       <View style={styles.passwordContainer}>
         <TextInput
           placeholder="Password"
@@ -113,14 +115,9 @@ export default function RegisterForm() {
           secureTextEntry={!showPassword}
         />
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <Ionicons
-            name={showPassword ? "eye-off" : "eye"}
-            size={22}
-            color="#888"
-          />
+          <Ionicons name={showPassword ? "eye-off" : "eye"} size={22} color="#888" />
         </TouchableOpacity>
       </View>
-
       <View style={styles.passwordContainer}>
         <TextInput
           placeholder="Confirm Password"
@@ -139,9 +136,7 @@ export default function RegisterForm() {
           />
         </TouchableOpacity>
       </View>
-
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
       <TouchableOpacity
         style={[styles.button, loading && { opacity: 0.5 }]}
         onPress={handleRegister}
@@ -151,7 +146,6 @@ export default function RegisterForm() {
           {loading ? "Registering..." : "Register"}
         </Text>
       </TouchableOpacity>
-
       <TouchableOpacity onPress={() => navigation.navigate("Login")}>
         <Text style={styles.registerText}>Already have an account?</Text>
       </TouchableOpacity>

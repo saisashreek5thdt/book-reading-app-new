@@ -6,21 +6,19 @@ import { useTheme } from "../utils/theme";
 
 export default function Profile() {
   const { theme, setTheme, currentTheme } = useTheme();
-  const { logout } = useAuth(); // Get logout from context
+  const { logout, user } = useAuth(); // Get logout from context
   const navigation = useNavigation();
 
   const handleLogout = async () => {
     try {
       // Call the logout API
-      const response = await fetch("https://book-reading-app-api-o9ts.vercel.app/api/auth/logout ", {
+      const response = await fetch("https://book-reading-app-api-o9ts.vercel.app/api/auth/logout",  {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
       });
-
       const data = await response.json();
-
       if (response.ok) {
         console.log(data.message); // "Logout successful"
         await logout(); // Clear token from context & SecureStore
@@ -33,12 +31,22 @@ export default function Profile() {
     }
   };
 
+  if (!user) {
+    return (
+      <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+        <Text style={{ color: currentTheme.text }}>No user data found.</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <InfoRow label="Full Name" value={user.fullName} currentTheme={currentTheme} />
+      <InfoRow label="Email" value={user.email} currentTheme={currentTheme} />
+      <InfoRow label="Mobile" value={user.mobile || "Not provided"} currentTheme={currentTheme} />
       <Text style={[styles.title, { color: currentTheme.text }]}>
         Theme: {theme}
       </Text>
-
       <View style={styles.buttonGroup}>
         {["light", "dark", "system"].map((mode) => (
           <TouchableOpacity
@@ -64,7 +72,6 @@ export default function Profile() {
           </TouchableOpacity>
         ))}
       </View>
-
       {/* Logout Button */}
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Logout</Text>
@@ -73,40 +80,65 @@ export default function Profile() {
   );
 }
 
+function InfoRow({ label, value, currentTheme }) {
+  return (
+    <View style={styles.row}>
+      <Text style={[styles.label, { color: currentTheme.text }]}>{label}</Text>
+      <Text style={[styles.value, { color: currentTheme.text }]}>{value}</Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
+    paddingTop: 70,
+    paddingLeft: 30,
+    paddingRight: 30,
+    justifyContent: "flex-start",
   },
-  title: {
-    fontSize: 20,
+  row: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    paddingVertical: 10,
+  },
+  label: {
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
+    color: "#888",
+  },
+  value: {
+    fontSize: 16,
     fontFamily: "Montserrat-Medium",
-    marginBottom: 20,
-    textTransform: "capitalize",
+    marginBottom: 15,
   },
   buttonGroup: {
     flexDirection: "row",
-    gap: 15,
-    marginBottom: 40,
+    justifyContent: "space-around",
+    marginTop: 20,
   },
   button: {
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
     borderWidth: 2,
+    marginBottom: 10,
   },
   logoutButton: {
-    marginTop: 20,
+    marginTop: 30,
     backgroundColor: "#FF4D4D",
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 10,
+    alignSelf: "center",
   },
   logoutText: {
     color: "#fff",
     fontSize: 16,
     fontFamily: "Montserrat-Bold",
+  },
+  title: {
+    fontSize: 18,
+    marginTop: 20,
   },
 });
