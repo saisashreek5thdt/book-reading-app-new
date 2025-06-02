@@ -8,7 +8,7 @@ import {
 import { useTheme } from "../utils/theme";
 import Book from "./Book";
 
-export default function BookList({ title }) {
+export default function BookList({ title, books }) {
   const { currentTheme } = useTheme();
 
   return (
@@ -27,7 +27,7 @@ export default function BookList({ title }) {
           </Text>
         </TouchableOpacity>
       </View>
-      <Book />
+      <Book books={books} />
     </SafeAreaView>
   );
 }

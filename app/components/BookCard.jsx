@@ -2,14 +2,16 @@ import { Image, StyleSheet, Text, TouchableOpacity } from "react-native";
 import colors from "../utils/colors";
 import { useTheme } from "../utils/theme";
 
-export default function BookCard() {
+export default function BookCard({ title, author, coverImage }) {
   const { theme } = useTheme();
 
   return (
     <TouchableOpacity style={styles.bookCardContainer}>
       <Image
         style={styles.bookCoverImg}
-        source={require("../../assets/images/book.jpg")}
+        // source={require("../../assets/images/book.jpg")}
+        source={{ uri: coverImage.trim() }}
+        resizeMode="cover"
       />
       <Text
         style={[
@@ -17,7 +19,7 @@ export default function BookCard() {
           { color: theme === "dark" ? colors.BLACK : colors.WHITE },
         ]}
       >
-        Title
+        {title}
       </Text>
       <Text
         style={[
@@ -25,7 +27,7 @@ export default function BookCard() {
           { color: theme === "dark" ? colors.BLACK : colors.WHITE },
         ]}
       >
-        Author Name
+        {author}
       </Text>
     </TouchableOpacity>
   );

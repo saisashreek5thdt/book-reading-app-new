@@ -166,7 +166,7 @@ export default function LoginForm() {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-        <Text style={styles.registerText}>Don't have an account? Register</Text>
+        <Text style={styles.registerText}>Don&apos;t have an account? Register</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("Forgot")}>
