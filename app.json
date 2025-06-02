@@ -2,7 +2,7 @@
   "expo": {
     "name": "book-reading-app-new",
     "slug": "book-reading-app-new",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/book.jpg",
     "scheme": "bookreadingappnew",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "com.fifthdt.bookreading",
-      "buildNumber": "2",
+      "buildNumber": "3",
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera for reading."
@@ -18,7 +18,7 @@
     },
     "android": {
       "package": "com.fifthdt.bookreading",
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/book.jpg",
         "backgroundColor": "#ffffff"
