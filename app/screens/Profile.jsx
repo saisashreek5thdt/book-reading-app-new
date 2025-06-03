@@ -1,8 +1,11 @@
 import { useNavigation } from "@react-navigation/native"; // For navigation
+import Constants from "expo-constants";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../context/AuthContext"; // Import useAuth
 import colors from "../utils/colors";
 import { useTheme } from "../utils/theme";
+
+const { AUTH_LOGOUT } = Constants.expoConfig.extra;
 
 export default function Profile() {
   const { theme, setTheme, currentTheme } = useTheme();
@@ -12,7 +15,7 @@ export default function Profile() {
   const handleLogout = async () => {
     try {
       // Call the logout API
-      const response = await fetch("https://book-reading-app-api-o9ts.vercel.app/api/auth/logout",  {
+      const response = await fetch(AUTH_LOGOUT,  {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,5 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import {
@@ -13,8 +16,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../utils/theme";
 
-// 🔁 Use a valid backend URL here or switch to mock mode
-const API_URL = "https://book-reading-app-api-o9ts.vercel.app/api/auth/login";  // Replace if needed
+const { AUTH_LOGIN } = Constants.expoConfig.extra;
 
 export default function LoginForm() {
   const { login } = useAuth();
@@ -62,7 +64,7 @@ export default function LoginForm() {
     setError("");
 
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(AUTH_LOGIN, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
