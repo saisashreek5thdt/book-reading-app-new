@@ -1,5 +1,6 @@
 import NetInfo from "@react-native-community/netinfo";
 import { NavigationContainer } from "@react-navigation/native";
+import Constants from "expo-constants";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -9,6 +10,13 @@ import { AuthProvider } from "./app/context/AuthContext";
 import RootNavigator from "./app/RootNavigator";
 import NoInternetScreen from "./app/screens/NoInternet";
 import { ThemeProvider } from "./app/utils/theme";
+
+const { AUTH_LOGIN, AUTH_REGISTER, CATE_DATA, AUTH_LOGOUT } = Constants.expoConfig.extra;
+
+console.log("AUTH_LOGIN:", AUTH_LOGIN);
+console.log("AUTH_REGISTER:", AUTH_REGISTER);
+console.log("CATE_DATA:", CATE_DATA);
+console.log("AUTH_LOGOUT:", AUTH_LOGOUT);
 
 SplashScreen.preventAutoHideAsync();
 
