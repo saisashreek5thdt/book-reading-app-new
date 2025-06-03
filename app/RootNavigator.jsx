@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ActivityIndicator, View } from "react-native";
-
+import EditProfileScreen from "./screens/EditProfileScreen";
 // Import Screens
 import ForgotScreen from "./screens/ForgotScreen";
 import LoginScreen from "./screens/LoginScreen";
@@ -31,6 +31,7 @@ export default function RootNavigator() {
       screenOptions={{ headerShown: false }}
     >
       {/* Always render all screens */}
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: "Edit Profile" }} />
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="Welcome" component={Welcome} />
       <Stack.Screen name="Login" component={LoginScreen} />
