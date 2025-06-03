@@ -48,8 +48,6 @@ export default function EditProfileScreen() {
 
                 // Update local context
                await updateUser({ ...user, fullName, mobile });
-
-                navigation.goBack(); // Go back to Profile screen
             } else {
                 Alert.alert("Error", data.message || "Failed to update profile.");
             }
