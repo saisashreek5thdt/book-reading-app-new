@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import colors from "../utils/colors";
 import { useTheme } from "../utils/theme";
+import AppInfo from "./AppInfo";
 import Bookmark from "./Bookmark";
 import Categories from "./Categories";
 import Home from "./Home";
@@ -68,6 +69,15 @@ export function Tabs() {
         options={{
           tabBarIcon: ({ size, color }) => (
             <Feather name="user" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Info"
+        component={AppInfo}
+        options={{
+          tabBarIcon: ({ size, color }) => (
+            <Feather name="info" size={size} color={color} />
           ),
         }}
       />
