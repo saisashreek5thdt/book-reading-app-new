@@ -16,6 +16,13 @@
       "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease"
+      },
+      "env": {
+        "AUTH_LOGIN": "$(AUTH_LOGIN)",
+        "AUTH_REGISTER": "$(AUTH_REGISTER)",
+        "AUTH_LOGOUT": "$(AUTH_LOGOUT)",
+        "CATE_DATA": "$(CATE_DATA)",
+        "USER_DATA": "$(USER_DATA)"
       }
     }
   },
