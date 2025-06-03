@@ -10,6 +10,17 @@ import RootNavigator from "./app/RootNavigator";
 import NoInternetScreen from "./app/screens/NoInternet";
 import { ThemeProvider } from "./app/utils/theme";
 
+import Constants from "expo-constants";
+
+const { AUTH_LOGIN, AUTH_REGISTER, CATE_DATA, AUTH_LOGOUT, USER_DATA } =
+  Constants.expoConfig.extra;
+
+console.log("AUTH_LOGIN:", AUTH_LOGIN);
+console.log("AUTH_REGISTER:", AUTH_REGISTER);
+console.log("CATE_DATA:", CATE_DATA);
+console.log("AUTH_LOGOUT:", AUTH_LOGOUT);
+console.log("USER_DATA:", USER_DATA);
+
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
