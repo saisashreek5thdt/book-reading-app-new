@@ -1,5 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import {
@@ -13,8 +16,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../utils/theme";
 
-// 🔁 Use a valid backend URL here or switch to mock mode
-const API_URL = "https://book-reading-app-api-o9ts.vercel.app/api/auth/login";  // Replace if needed
+const { AUTH_LOGIN } = Constants.expoConfig.extra;
 
 export default function LoginForm() {
   const { login } = useAuth();
@@ -62,7 +64,7 @@ export default function LoginForm() {
     setError("");
 
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(AUTH_LOGIN, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +102,6 @@ export default function LoginForm() {
 
       await login(token, user); // ✅ Handles both SecureStore and state
       navigation.replace("Main");
-
     } catch (err) {
       console.error("Login error:", err);
       setError("Network error. Please try again.");
@@ -121,7 +122,9 @@ export default function LoginForm() {
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.formBG }]}>
-      <Text style={[styles.title, { color: currentTheme.formTitle }]}>Login</Text>
+      <Text style={[styles.title, { color: currentTheme.formTitle }]}>
+        Login
+      </Text>
 
       <TextInput
         placeholder="Email"
@@ -133,7 +136,12 @@ export default function LoginForm() {
         autoCapitalize="none"
       />
 
-      <View style={[styles.passwordContainer, { backgroundColor: currentTheme.background }]}>
+      <View
+        style={[
+          styles.passwordContainer,
+          { backgroundColor: currentTheme.background },
+        ]}
+      >
         <TextInput
           placeholder="Password"
           placeholderTextColor={currentTheme.formTitle}
@@ -166,7 +174,9 @@ export default function LoginForm() {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-        <Text style={styles.registerText}>Don&apos;t have an account? Register</Text>
+        <Text style={styles.registerText}>
+          Don&apos;t have an account? Register
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("Forgot")}>
@@ -174,7 +184,7 @@ export default function LoginForm() {
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {

@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import Constants from "expo-constants";
 import { useState } from "react";
 import {
   StyleSheet,
@@ -9,6 +10,8 @@ import {
   View,
 } from "react-native";
 import { useAuth } from "../context/AuthContext"; // Import Auth hook
+
+const { AUTH_REGISTER } = Constants.expoConfig.extra;
 
 export default function RegisterForm() {
   const navigation = useNavigation();
@@ -42,26 +45,25 @@ export default function RegisterForm() {
     setError("");
 
     try {
-      const response = await fetch(
-        "https://book-reading-app-api-o9ts.vercel.app/api/auth/register", 
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fullName,
-            email,
-            mobile: phone,
-            password,
-          }),
-        }
-      );
+      const response = await fetch(AUTH_REGISTER, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName,
+          email,
+          mobile: phone,
+          password,
+        }),
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Registration failed. Please try again.");
+        throw new Error(
+          data.message || "Registration failed. Please try again."
+        );
       }
 
       // ✅ Extract token and user from backend
@@ -73,7 +75,6 @@ export default function RegisterForm() {
 
       // ✅ Navigate to main screen
       navigation.replace("Main");
-
     } catch (err) {
       setError(err.message);
     } finally {
@@ -115,7 +116,11 @@ export default function RegisterForm() {
           secureTextEntry={!showPassword}
         />
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <Ionicons name={showPassword ? "eye-off" : "eye"} size={22} color="#888" />
+          <Ionicons
+            name={showPassword ? "eye-off" : "eye"}
+            size={22}
+            color="#888"
+          />
         </TouchableOpacity>
       </View>
       <View style={styles.passwordContainer}>
