@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import Feather from "@expo/vector-icons/Feather";
 import {
   Alert,

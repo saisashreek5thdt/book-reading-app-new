@@ -1,19 +1,20 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 // import * as Speech from "expo-speech";
-import React,{ useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
-    Dimensions,
-    Image,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 // import { useBookmarks } from "../utils/BookMarkContext";
 import colors from "../utils/colors";
