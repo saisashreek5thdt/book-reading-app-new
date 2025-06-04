@@ -1,16 +1,29 @@
 // ./screens/Tabs.jsx
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
 import { Feather } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import BookDetail from "../components/BookDetail";
 import colors from "../utils/colors";
 import { useTheme } from "../utils/theme";
 import AppInfo from "./AppInfo";
 import Bookmark from "./Bookmark";
+import BookRead from "./BookRead";
 import Categories from "./Categories";
 import Home from "./Home";
 import Profile from "./Profile";
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+function HomeStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="BookDetail" component={BookDetail} />
+      <Stack.Screen name="BookRead" component={BookRead} />
+    </Stack.Navigator>
+  );
+}
 
 export function Tabs() {
   const { currentTheme, theme } = useTheme();
@@ -38,7 +51,7 @@ export function Tabs() {
     >
       <Tab.Screen
         name="Home"
-        component={Home}
+        component={HomeStack}
         options={{
           tabBarIcon: ({ size, color }) => (
             <Feather name="home" size={size} color={color} />
@@ -85,4 +98,4 @@ export function Tabs() {
   );
 }
 
-export default Tabs; // Ensure this line exists
+export default Tabs;

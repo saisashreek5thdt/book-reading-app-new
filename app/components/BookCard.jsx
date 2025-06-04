@@ -2,11 +2,11 @@ import { Image, StyleSheet, Text, TouchableOpacity } from "react-native";
 import colors from "../utils/colors";
 import { useTheme } from "../utils/theme";
 
-export default function BookCard({ title, author, coverImage }) {
+export default function BookCard({ title, author, coverImage, onPress }) {
   const { theme } = useTheme();
 
   return (
-    <TouchableOpacity style={styles.bookCardContainer}>
+    <TouchableOpacity style={styles.bookCardContainer} onPress={onPress}>
       <Image
         style={styles.bookCoverImg}
         // source={require("../../assets/images/book.jpg")}

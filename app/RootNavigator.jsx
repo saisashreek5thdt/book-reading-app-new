@@ -1,16 +1,16 @@
+// RootNavigator.jsx
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ActivityIndicator, View } from "react-native";
-import EditProfileScreen from "./screens/EditProfileScreen";
+
 // Import Screens
+import { useAuth } from "./context/AuthContext";
+import EditProfileScreen from "./screens/EditProfileScreen";
 import ForgotScreen from "./screens/ForgotScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import SplashScreen from "./screens/SplashScreen";
-import { Tabs } from "./screens/Tabs"; // Make sure this exports correctly
+import Tabs from "./screens/Tabs"; // ✅ Only import the component
 import Welcome from "./screens/Welcome";
-
-// Context
-import { useAuth } from "./context/AuthContext";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,17 +27,20 @@ export default function RootNavigator() {
 
   return (
     <Stack.Navigator
-      initialRouteName={authToken ? "Main" : "Splash"} // Dynamic route name
+      initialRouteName={authToken ? "Main" : "Splash"}
       screenOptions={{ headerShown: false }}
     >
-      {/* Always render all screens */}
-      <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: "Edit Profile" }} />
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="Welcome" component={Welcome} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Forgot" component={ForgotScreen} />
-      <Stack.Screen name="Main" component={Tabs} options={{ headerShown: false }} />
+      <Stack.Screen name="Main" component={Tabs} />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{ title: "Edit Profile" }}
+      />
     </Stack.Navigator>
   );
 }

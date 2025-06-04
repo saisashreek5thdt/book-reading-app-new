@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import {
   SafeAreaView,
   StyleSheet,
@@ -10,7 +11,7 @@ import Book from "./Book";
 
 export default function BookList({ title, books }) {
   const { currentTheme } = useTheme();
-
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={{ backgroundColor: currentTheme.background }}>
       <View style={styles.bookListContainer}>
@@ -27,7 +28,7 @@ export default function BookList({ title, books }) {
           </Text>
         </TouchableOpacity>
       </View>
-      <Book books={books} />
+      <Book books={books} navigation={navigation}/>
     </SafeAreaView>
   );
 }
