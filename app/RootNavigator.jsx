@@ -1,3 +1,4 @@
+/* eslint-disable import/no-named-as-default */
 // RootNavigator.jsx
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ActivityIndicator, View } from "react-native";
