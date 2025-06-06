@@ -8,6 +8,7 @@ import { StyleSheet, View } from "react-native";
 import { AuthProvider } from "./app/context/AuthContext";
 import RootNavigator from "./app/RootNavigator";
 import NoInternetScreen from "./app/screens/NoInternet";
+import { BookmarkProvider } from "./app/utils/BookMarkContext";
 import { ThemeProvider } from "./app/utils/theme";
 
 import Constants from "expo-constants";
@@ -56,12 +57,14 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
+      <BookmarkProvider>
         <View style={styles.container} onLayout={onLayoutRootView}>
           <NavigationContainer>
             <StatusBar style="auto" />
             {isConnected ? <RootNavigator /> : <NoInternetScreen />}
           </NavigationContainer>
         </View>
+        </BookmarkProvider>
       </AuthProvider>
     </ThemeProvider>
   );

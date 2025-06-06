@@ -2,18 +2,18 @@ import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 // import * as Speech from "expo-speech";
-import React,{ useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
-    Dimensions,
-    Image,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 // import { useBookmarks } from "../utils/BookMarkContext";
 import colors from "../utils/colors";
@@ -65,9 +65,14 @@ export default function BookRead() {
       .map((para) => para.trim())
       .filter(Boolean);
 
-    const images = bookData.contentBlocks
-      ?.filter((block) => block.type === "IMAGE")
-      .map((block) => block.content) || [];
+  //     const imagesFromContentBlocks = bookData.contentBlocks
+  // ?.filter((block) => block.type === "IMAGE")
+  // .map((block) => block.content) || [];
+
+  const images = bookData.images || []; // ✅ New field
+
+// Combine them if needed, or choose one
+  //  const allImages = [...imagesFromContentBlocks, ...imagesFromImagesField];
 
     let contentBlocks = [];
 

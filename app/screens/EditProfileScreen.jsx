@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { useAuth } from "../context/AuthContext";
+import colors from "../utils/colors";
 
 const { USER_DATA } = Constants.expoConfig.extra;
 
@@ -100,6 +101,15 @@ export default function EditProfileScreen() {
           <Text style={styles.saveButtonText}>Save Changes</Text>
         )}
       </TouchableOpacity>
+
+      <TouchableOpacity
+            style={styles.headerButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={[styles.headerText, { color: colors.WHITE }]}>
+              Back
+            </Text>
+          </TouchableOpacity>
     </View>
   );
 }
@@ -132,6 +142,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   saveButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  headerButton: {
+    backgroundColor: "#FF4D4D",
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop:15,
+  },
+  headerText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",

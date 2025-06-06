@@ -1,4 +1,5 @@
 import Feather from "@expo/vector-icons/Feather";
+import { useRoute } from "@react-navigation/native";
 import {
   Alert,
   Image,
@@ -11,15 +12,43 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useBookmarks } from "../utils/BookMarkContext";
 import colors from "../utils/colors";
 import { useTheme } from "../utils/theme";
 
-export default function BookDetail({ route, navigation }) {
-  const { book } = route.params;
+export default function BookDetail({  navigation }) {
+  const { bookmarks, addBookmark } = useBookmarks();
+  const route = useRoute();
+  const { book = {} } = route?.params || {};
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
+  if (!book || !book.coverImage) {
+    return (
+      <View style={styles.centered}>
+        <Text>Loading book details...</Text>
+      </View>
+    );
+  }
+
   const handleBookmark = () => {
+    if (!book || !book.id) {
+      Alert.alert("Error", "Invalid book data");    
+      return null; // or handle gracefully
+    }
+
+    const alreadyBookmarked = bookmarks.some((b) => b.bookId === book.id);
+
+
+    if (alreadyBookmarked) {
+      if (Platform.OS === "android") {
+        ToastAndroid.show("Already bookmarked!", ToastAndroid.SHORT);
+      } else {
+        Alert.alert("Info", "This book is already bookmarked.");
+      }
+      return;
+    }
+
     addBookmark(book);
 
     if (Platform.OS === "android") {
@@ -28,7 +57,10 @@ export default function BookDetail({ route, navigation }) {
       Alert.alert("Bookmarked", "Book added to bookmarks!");
     }
 
-    navigation.navigate("Main", { screen: "Bookmark" }); // Ensure 'Bookmark' screen is registered in your navigator
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Main", params: { screen: "Bookmark" } }],
+    });// Ensure 'Bookmark' screen is registered in your navigator
   };
 
   return (
@@ -75,11 +107,11 @@ export default function BookDetail({ route, navigation }) {
             style={styles.bookImage}
             source={
               typeof book.coverImage === "string" &&
-              book.coverImage.startsWith("http")
+                book.coverImage.startsWith("http")
                 ? { uri: book.coverImage }
                 : typeof book.coverImage === "number"
-                ? book.imageURL // already a require()
-                : require("../../assets/images/book.jpg") // fallback or local static asset
+                  ? book.imageURL // already a require()
+                  : require("../../assets/images/book.jpg") // fallback or local static asset
             }
           />
         </View>
