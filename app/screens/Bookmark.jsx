@@ -69,6 +69,7 @@ const Bookmark = () => {
                   <Text style={styles.progress}>
                     Progress: {item.progress ?? 0}% read
                   </Text>
+                  
                   <TouchableOpacity
                     onPress={() => removeBookmark(item.id)}
                     style={styles.removeButton}

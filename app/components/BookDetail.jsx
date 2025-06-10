@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 import Feather from "@expo/vector-icons/Feather";
 import { useRoute } from "@react-navigation/native";
 import {

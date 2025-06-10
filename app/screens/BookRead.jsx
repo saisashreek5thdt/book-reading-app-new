@@ -1,10 +1,10 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 // import * as Speech from "expo-speech";
 import React, { useEffect, useState } from "react";
-
 import {
   Dimensions,
   Image,
@@ -16,7 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-// import { useBookmarks } from "../utils/BookMarkContext";
+import { useBookmarks } from "../utils/BookMarkContext";
 import colors from "../utils/colors";
 import { useTheme } from "../utils/theme";
 
@@ -37,7 +37,7 @@ export default function BookRead() {
   const navigation = useNavigation();
   const { theme } = useTheme();
   const isDark = theme === "dark";
-//   const { addBookmark } = useBookmarks();
+  const { addBookmark ,bookmarks, updateBookmarkProgress } = useBookmarks();
 
   // State
   const [fontSize, setFontSize] = useState(16);
@@ -45,6 +45,30 @@ export default function BookRead() {
   const [chunks, setChunks] = useState([]);
   const [isReading, setIsReading] = useState(false);
   const [highlightedKey, setHighlightedKey] = useState(null);
+  const [availableVoices, setAvailableVoices] = useState([]);
+  const [selectedVoice, setSelectedVoice] = useState(null);
+
+  // Load available voices
+  // useEffect(() => {
+  //   const loadVoices = async () => {
+  //     // const voices = await Speech.getAvailableVoicesAsync();
+  //     // setAvailableVoices(voices);
+
+  //     // Prefer Indian Female Voice
+  //     const indianFemale = voices.find(
+  //       (v) => v.language === "en-IN" && v.name.toLowerCase().includes("female")
+  //     );
+  //     // Fallback to any en-IN voice
+  //     const fallbackVoice = voices.find((v) => v.language === "en-IN");
+
+  //     setSelectedVoice(indianFemale || fallbackVoice || null);
+  //   };
+  //   loadVoices();
+  // }, []);
+
+  const debouncedUpdate = useDebounce(async (bookmarkId, progress) => {
+    await updateBookmarkProgress(bookmarkId, progress);
+  }, 1000);
 
   // Get book data from route params
   const bookData = route?.params?.book || null;
@@ -52,7 +76,7 @@ export default function BookRead() {
   // Handle bookmarking
   const handleBookmark = () => {
     if (bookData) {
-    //   addBookmark(bookData);
+      addBookmark(bookData);
       alert("Bookmarked!");
     }
   };
@@ -60,24 +84,18 @@ export default function BookRead() {
   // Prepare content blocks based on layout
   const prepareContentBasedOnLayout = () => {
     if (!bookData) return [];
+    const { layout } = bookData;
     const rawContent = bookData.content || "";
+    
     const textContent = rawContent
       .split("\n")
       .map((para) => para.trim())
       .filter(Boolean);
-
-  //     const imagesFromContentBlocks = bookData.contentBlocks
-  // ?.filter((block) => block.type === "IMAGE")
-  // .map((block) => block.content) || [];
-
-  const images = bookData.images || []; // ✅ New field
-
-// Combine them if needed, or choose one
-  //  const allImages = [...imagesFromContentBlocks, ...imagesFromImagesField];
-
+    const images = bookData.images || [];
+    // console.log("Book Data:", bookData.images);
     let contentBlocks = [];
 
-    switch (bookData.layout) {
+    switch (layout) {
       case LAYOUT_TYPES.FULL_TEXT:
         contentBlocks = textContent.map((para, index) => ({
           type: "text",
@@ -85,7 +103,6 @@ export default function BookRead() {
           key: `text-${index}`,
         }));
         break;
-
       case LAYOUT_TYPES.IMAGE_TOP_TEXT_BOTTOM:
         for (
           let i = 0;
@@ -99,10 +116,9 @@ export default function BookRead() {
               key: `image-${i}`,
             });
           }
-
           for (let j = 0; j < 2; j++) {
             const textIndex = i * 2 + j;
-            if (textContent[textIndex]) {
+            if (textIndex < textContent.length) {
               contentBlocks.push({
                 type: "text",
                 content: textContent[textIndex],
@@ -112,7 +128,6 @@ export default function BookRead() {
           }
         }
         break;
-
       case LAYOUT_TYPES.TEXT_TOP_IMAGE_BOTTOM:
         for (
           let i = 0;
@@ -121,7 +136,7 @@ export default function BookRead() {
         ) {
           for (let j = 0; j < 2; j++) {
             const textIndex = i * 2 + j;
-            if (textContent[textIndex]) {
+            if (textIndex < textContent.length) {
               contentBlocks.push({
                 type: "text",
                 content: textContent[textIndex],
@@ -129,7 +144,6 @@ export default function BookRead() {
               });
             }
           }
-
           if (i < images.length) {
             contentBlocks.push({
               type: "image",
@@ -139,7 +153,6 @@ export default function BookRead() {
           }
         }
         break;
-
       case LAYOUT_TYPES.MIXED:
       default:
         const textBlocks = textContent.map((para, index) => ({
@@ -147,21 +160,17 @@ export default function BookRead() {
           content: para,
           key: `text-${index}`,
         }));
-
         const imageBlocks = images.map((url, index) => ({
           type: "image",
           content: url,
           key: `image-${index}`,
         }));
-
         let maxLen = Math.max(textBlocks.length, imageBlocks.length);
         contentBlocks = [];
-
         for (let i = 0; i < maxLen; i++) {
           if (i < textBlocks.length) contentBlocks.push(textBlocks[i]);
           if (i < imageBlocks.length) contentBlocks.push(imageBlocks[i]);
         }
-
         break;
     }
 
@@ -172,7 +181,6 @@ export default function BookRead() {
   const splitContentIntoPages = (contentBlocks) => {
     if (!Array.isArray(contentBlocks) || contentBlocks.length === 0)
       return [[]];
-
     const pages = [];
     let currentHeight = 0;
     let page = [];
@@ -203,42 +211,52 @@ export default function BookRead() {
     return pages;
   };
 
-  // Load content on change
+  // Update chunks when fontSize changes
+  useEffect(() => {
+    if (!bookData) return;
+    const contentBlocks = prepareContentBasedOnLayout();
+    const newChunks = splitContentIntoPages(contentBlocks);
+    setChunks(newChunks);
+    setCurrentPage(Math.min(currentPage, newChunks.length - 1));
+  }, [fontSize]);
+
+  // Initial load
   useEffect(() => {
     if (!bookData) return;
     const contentBlocks = prepareContentBasedOnLayout();
     const newChunks = splitContentIntoPages(contentBlocks);
     setChunks(newChunks);
     setCurrentPage(0);
-  }, [bookData]);
+  }, []);
+
+  const currentContent = chunks[currentPage] || [];
 
   // Start reading current page
-  const speakPageText = () => {
-    const pageText = chunks[currentPage]
-      ?.filter((item) => item.type === "text")
-      .map((item) => item.content)
-      .join(" ");
-
-    if (pageText) {
-    //   Speech.stop(); // Stop any ongoing speech
-    //   Speech.speak(pageText, {
-    //     language: "en-IN",
-    //     rate: 0.9,
-    //     pitch: 1.9,
-    //     onDone: () => {
-    //       setIsReading(false);
-    //       setHighlightedKey(null);
-    //     },
-    //     onStopped: () => {
-    //       setIsReading(false);
-    //       setHighlightedKey(null);
-    //     },
-    //   });
-
-      highlightNextTextBlock(0);
-      setIsReading(true);
-    }
-  };
+  // const speakPageText = () => {
+  //   const pageText = currentContent
+  //     .filter((item) => item.type === "text")
+  //     .map((item) => item.content)
+  //     .join(" ");
+  //   if (pageText && selectedVoice) {
+  //     Speech.stop(); // stop any previous speech
+  //     Speech.speak(pageText, {
+  //       voice: selectedVoice.identifier,
+  //       language: "en-IN",
+  //       rate: 0.9,
+  //       pitch: 1.9,
+  //       onDone: () => {
+  //         setIsReading(false);
+  //         setHighlightedKey(null);
+  //       },
+  //       onStopped: () => {
+  //         setIsReading(false);
+  //         setHighlightedKey(null);
+  //       },
+  //     });
+  //     highlightNextTextBlock(0);
+  //     setIsReading(true);
+  //   }
+  // };
 
   const stopReading = () => {
     // Speech.stop();
@@ -246,9 +264,32 @@ export default function BookRead() {
     setHighlightedKey(null);
   };
 
+  useEffect(() => {
+  if (chunks.length && bookData && bookmarks.length) {
+    updateProgress(currentPage, chunks.length);
+  }
+}, [currentPage]);
+
+
+  // Calculate and update progress
+  const updateProgress = async (currentPageIndex, totalPages) => {
+    if (!bookData || !bookData.id) return;
+
+    const bookmark = bookmarks.find((b) => b.bookId === bookData.id);
+    if (!bookmark) return;
+
+    const { id: bookmarkId } = bookmark;
+    const progress = Math.round(((currentPageIndex + 1) / totalPages) * 100);
+
+    if (progress !== bookmark.progress) {
+      debouncedUpdate(bookmarkId, progress);
+    }
+  };
+
   const highlightNextTextBlock = (index) => {
-    if (index >= chunks[currentPage].length) return;
-    const nextItem = chunks[currentPage][index];
+    if (index >= currentContent.length) return;
+    const nextItem = currentContent[index];
+
     if (nextItem?.type === "text") {
       setHighlightedKey(nextItem.key);
       const duration = Math.min(3000, nextItem.content.length * 40); // cap at 3s per block
@@ -264,17 +305,20 @@ export default function BookRead() {
 
   // Stop reading when unmounting
   useEffect(() => {
-    return () => stopReading();
+    return () => {
+      stopReading();
+    };
   }, []);
 
-  const currentContent = chunks[currentPage] || [];
-
+  // Fallback UI if no book data
   if (!bookData) {
     return (
       <View style={styles.centered}>
-        <Text>No book found.</Text>
+        <Text style={{ color: isDark ? colors.WHITE : colors.BLACK }}>
+          No book found.
+        </Text>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={{ color: colors.PRIMARY }}>Go Back</Text>
+          <Text style={{ color: colors.PRIMARY, marginTop: 10 }}>Go Back</Text>
         </TouchableOpacity>
       </View>
     );
@@ -301,33 +345,36 @@ export default function BookRead() {
           <Feather name="chevron-left" size={24} color={colors.WHITE} />
           <Text style={styles.headerText}>Back</Text>
         </TouchableOpacity>
-
         <View style={styles.rightHeader}>
           <TouchableOpacity
             style={styles.iconButton}
             onPress={() => setFontSize((prev) => Math.min(prev + 2, 30))}
           >
-            <MaterialIcons name="text-increase" size={24} color={colors.WHITE} />
+            <MaterialIcons
+              name="text-increase"
+              size={24}
+              color={colors.WHITE}
+            />
           </TouchableOpacity>
-
           <TouchableOpacity
             style={styles.iconButton}
             onPress={() => setFontSize((prev) => Math.max(prev - 2, 12))}
           >
-            <MaterialIcons name="text-decrease" size={24} color={colors.WHITE} />
+            <MaterialIcons
+              name="text-decrease"
+              size={24}
+              color={colors.WHITE}
+            />
           </TouchableOpacity>
-
           <TouchableOpacity style={styles.iconButton}>
             <Feather name="share" size={24} color={colors.WHITE} />
           </TouchableOpacity>
-
           <TouchableOpacity style={styles.iconButton} onPress={handleBookmark}>
             <Feather name="bookmark" size={24} color={colors.WHITE} />
           </TouchableOpacity>
-
           <TouchableOpacity
             style={styles.iconButton}
-            onPress={isReading ? stopReading : speakPageText}
+            // onPress={isReading ? stopReading : speakPageText}
           >
             <Feather
               name={isReading ? "pause" : "play"}
@@ -352,32 +399,38 @@ export default function BookRead() {
 
       {/* Content */}
       <ScrollView contentContainerStyle={styles.pageContent}>
-        {currentContent.map((item) => (
-          <React.Fragment key={item.key}>
-            {item.type === "text" && (
-              <Text
-                style={[
-                  styles.bookText,
-                  {
-                    fontSize,
-                    color: isDark ? colors.WHITE : colors.BLACK,
-                    backgroundColor:
-                      highlightedKey === item.key ? "#FFFF99" : "transparent",
-                  },
-                ]}
-              >
-                {item.content}
-              </Text>
-            )}
-            {item.type === "image" && (
-              <Image
-                source={{ uri: item.content }}
-                style={styles.image}
-                resizeMode="cover"
-              />
-            )}
-          </React.Fragment>
-        ))}
+        {currentContent.map((item) =>
+          item.type === "text" ? (
+            <Text
+              key={item.key}
+              style={[
+                styles.bookText,
+                {
+                  fontSize,
+                  color: isDark ? colors.WHITE : colors.BLACK,
+                  backgroundColor:
+                    highlightedKey === item.key ? "#FFFF99" : "transparent",
+                },
+              ]}
+            >
+              {item.content}
+            </Text>
+          ) : (
+            <Image
+              key={item.key}
+              source={
+                typeof item.content === "number"
+                  ? item.content
+                  : { uri: item.content.trim() }
+              }
+              style={styles.image}
+              resizeMode="cover"
+              onError={(e) =>
+                console.log("Image load error:", e.nativeEvent.error)
+              }
+            />
+          )
+        )}
       </ScrollView>
 
       {/* Pagination Controls */}
@@ -386,7 +439,7 @@ export default function BookRead() {
           disabled={currentPage <= 0}
           onPress={() => {
             stopReading();
-            setCurrentPage(currentPage - 1);
+            setCurrentPage((p) => p - 1);
           }}
           style={styles.navButton}
         >
@@ -394,12 +447,11 @@ export default function BookRead() {
             {currentPage === 0 ? "" : "Previous"}
           </Text>
         </TouchableOpacity>
-
         <Text style={styles.pageIndicator}>
           Page {currentPage + 1} of {chunks.length}
         </Text>
-
-         {currentPage >= chunks.length - 1 ? (
+        
+        {currentPage >= chunks.length - 1 ? (
           // Show Home Icon at last page
           <TouchableOpacity
             onPress={() => {
@@ -414,10 +466,11 @@ export default function BookRead() {
             <Feather name="home" size={20} color={colors.WHITE} />
           </TouchableOpacity>
         ) : (
+          // Normal Next button for other pages
           <TouchableOpacity
             onPress={() => {
               stopReading();
-              setCurrentPage(currentPage + 1);
+              setCurrentPage((p) => p + 1);
             }}
             style={styles.navButton}
           >
@@ -429,6 +482,22 @@ export default function BookRead() {
   );
 }
 
+function useDebounce(callback, delay) {
+  const ref = React.useRef();
+
+  useEffect(() => {
+    ref.current = callback;
+  }, [callback]);
+
+  return (...args) => {
+    const handler = setTimeout(() => {
+      ref.current?.apply(null, args);
+    }, delay);
+
+    return () => clearTimeout(handler);
+  };
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -437,6 +506,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    // marginTop: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
@@ -470,6 +540,7 @@ const styles = StyleSheet.create({
   },
   pageContent: {
     padding: 15,
+    minHeight: PAGE_HEIGHT - 170,
   },
   bookText: {
     lineHeight: 28,
