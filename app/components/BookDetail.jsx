@@ -120,7 +120,7 @@ export default function BookDetail({ navigation }) {
           <Text
             style={[
               styles.title,
-              { color: isDark ? colors.WHITE : colors.WHITE },
+              { color: isDark ? colors.WHITE : colors.BLACK },
             ]}
           >
             {book.title}
