@@ -143,7 +143,7 @@ export default function BookDetail({ navigation }) {
                   { color: isDark ? colors.WHITE : colors.PRIMARY },
                 ]}
               >
-                {book.rating}
+                {book.rating} ⭐⭐⭐⭐⭐
               </Text>
             </View>
             <View style={styles.metaGroup}>
