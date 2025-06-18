@@ -57,13 +57,13 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-      <BookmarkProvider>
-        <View style={styles.container} onLayout={onLayoutRootView}>
-          <NavigationContainer>
-            <StatusBar style="auto" />
-            {isConnected ? <RootNavigator /> : <NoInternetScreen />}
-          </NavigationContainer>
-        </View>
+        <BookmarkProvider>
+          <View style={styles.container} onLayout={onLayoutRootView}>
+            <NavigationContainer>
+              <StatusBar style="auto" />
+              {isConnected ? <RootNavigator /> : <NoInternetScreen />}
+            </NavigationContainer>
+          </View>
         </BookmarkProvider>
       </AuthProvider>
     </ThemeProvider>

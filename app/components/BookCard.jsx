@@ -10,7 +10,11 @@ export default function BookCard({ title, author, coverImage, onPress }) {
       <Image
         style={styles.bookCoverImg}
         // source={require("../../assets/images/book.jpg")}
-        source={{ uri: coverImage.trim() }}
+        source={
+          coverImage && typeof coverImage === "string"
+            ? { uri: coverImage.trim() }
+            : require("../../assets/images/book.jpg")
+        }
         resizeMode="cover"
       />
       <Text

@@ -1,4 +1,3 @@
- 
 import Feather from "@expo/vector-icons/Feather";
 import { useRoute } from "@react-navigation/native";
 import {
@@ -17,7 +16,7 @@ import { useBookmarks } from "../utils/BookMarkContext";
 import colors from "../utils/colors";
 import { useTheme } from "../utils/theme";
 
-export default function BookDetail({  navigation }) {
+export default function BookDetail({ navigation }) {
   const { bookmarks, addBookmark } = useBookmarks();
   const route = useRoute();
   const { book = {} } = route?.params || {};
@@ -34,12 +33,11 @@ export default function BookDetail({  navigation }) {
 
   const handleBookmark = () => {
     if (!book || !book.id) {
-      Alert.alert("Error", "Invalid book data");    
+      Alert.alert("Error", "Invalid book data");
       return null; // or handle gracefully
     }
 
     const alreadyBookmarked = bookmarks.some((b) => b.bookId === book.id);
-
 
     if (alreadyBookmarked) {
       if (Platform.OS === "android") {
@@ -61,7 +59,7 @@ export default function BookDetail({  navigation }) {
     navigation.reset({
       index: 0,
       routes: [{ name: "Main", params: { screen: "Bookmark" } }],
-    });// Ensure 'Bookmark' screen is registered in your navigator
+    }); // Ensure 'Bookmark' screen is registered in your navigator
   };
 
   return (
@@ -108,11 +106,11 @@ export default function BookDetail({  navigation }) {
             style={styles.bookImage}
             source={
               typeof book.coverImage === "string" &&
-                book.coverImage.startsWith("http")
+              book.coverImage.startsWith("https")
                 ? { uri: book.coverImage }
                 : typeof book.coverImage === "number"
-                  ? book.imageURL // already a require()
-                  : require("../../assets/images/book.jpg") // fallback or local static asset
+                ? book.imageURL // already a require()
+                : require("../../assets/images/book.jpg") // fallback or local static asset
             }
           />
         </View>
@@ -298,5 +296,10 @@ const styles = StyleSheet.create({
     color: colors.PRIMARY,
     fontSize: 16,
     fontWeight: "bold",
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

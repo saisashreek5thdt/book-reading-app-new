@@ -44,13 +44,13 @@ export function Tabs() {
         tabBarInactiveTintColor:
           theme === "dark" ? currentTheme.tabInActive : colors.tabDarkBG,
         tabBarLabelStyle: {
-          fontFamily: "Quicksand-Medium",
+          fontFamily: "Quicksand-Medium" ?? "System", // fallback
           fontSize: 12,
         },
       }}
     >
       <Tab.Screen
-        name="Home"
+        name="TabHome"
         component={HomeStack}
         options={{
           tabBarIcon: ({ size, color }) => (
