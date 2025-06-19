@@ -57,7 +57,6 @@ export default function EditProfileScreen() {
         await updateUser({ ...user, fullName, mobile });
 
         navigation.replace("Main");
-
       } else {
         Alert.alert("Error", data.message || "Failed to update profile.");
       }
@@ -103,13 +102,11 @@ export default function EditProfileScreen() {
       </TouchableOpacity>
 
       <TouchableOpacity
-            style={styles.headerButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={[styles.headerText, { color: colors.WHITE }]}>
-              Back
-            </Text>
-          </TouchableOpacity>
+        style={styles.headerButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={[styles.headerText, { color: colors.WHITE }]}>Back</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -119,7 +116,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#fff",
-    marginTop: 30
+    marginTop: 30,
   },
   sectionTitle: {
     fontSize: 20,
@@ -151,7 +148,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: "center",
-    marginTop:15,
+    marginTop: 15,
   },
   headerText: {
     color: "#fff",

@@ -28,10 +28,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: "#E8F9FF",
   },
-  text: { 
+  text: {
     fontFamily: "Quicksand-Bold",
-    fontSize: 16, 
+    fontSize: 16,
     marginBottom: 10,
-    color: "#F26B0F"
+    color: "#F26B0F",
   },
 });

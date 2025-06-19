@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
@@ -8,7 +9,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 import { useBookmarks } from "../utils/BookMarkContext";
@@ -69,7 +70,7 @@ const Bookmark = () => {
                   <Text style={styles.progress}>
                     Progress: {item.progress ?? 0}% read
                   </Text>
-                  
+
                   <TouchableOpacity
                     onPress={() => removeBookmark(item.id)}
                     style={styles.removeButton}

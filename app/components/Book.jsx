@@ -2,7 +2,7 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import BookCard from "./BookCard";
 
-export default function Book({ books = [], navigation}) {
+export default function Book({ books = [], navigation }) {
   // console.log("Books received:", books); // 👈 Add this
   // const navigation = useNavigation();
 

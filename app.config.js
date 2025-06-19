@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "book-reading-app-new",
     slug: "book-reading-app-new",
-    version: "1.0.2",
+    version: "1.0.8",
     orientation: "portrait",
     icon: "./assets/images/book.jpg",
     scheme: "bookreadingappnew",
@@ -12,7 +12,7 @@ export default {
     newArchEnabled: true,
     ios: {
       bundleIdentifier: "com.fifthdt.bookreading",
-      buildNumber: "3",
+      buildNumber: "8",
       supportsTablet: true,
       infoPlist: {
         NSCameraUsageDescription: "This app uses the camera for reading.",

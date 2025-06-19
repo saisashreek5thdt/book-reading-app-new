@@ -28,7 +28,7 @@ export default function BookList({ title, books }) {
           </Text>
         </TouchableOpacity>
       </View>
-      <Book books={books} navigation={navigation}/>
+      <Book books={books} navigation={navigation} />
     </SafeAreaView>
   );
 }

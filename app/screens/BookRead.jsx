@@ -37,7 +37,7 @@ export default function BookRead() {
   const navigation = useNavigation();
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const { addBookmark ,bookmarks, updateBookmarkProgress } = useBookmarks();
+  const { addBookmark, bookmarks, updateBookmarkProgress } = useBookmarks();
 
   // State
   const [fontSize, setFontSize] = useState(16);
@@ -86,7 +86,7 @@ export default function BookRead() {
     if (!bookData) return [];
     const { layout } = bookData;
     const rawContent = bookData.content || "";
-    
+
     const textContent = rawContent
       .split("\n")
       .map((para) => para.trim())
@@ -265,11 +265,10 @@ export default function BookRead() {
   };
 
   useEffect(() => {
-  if (chunks.length && bookData && bookmarks.length) {
-    updateProgress(currentPage, chunks.length);
-  }
-}, [currentPage]);
-
+    if (chunks.length && bookData && bookmarks.length) {
+      updateProgress(currentPage, chunks.length);
+    }
+  }, [currentPage]);
 
   // Calculate and update progress
   const updateProgress = async (currentPageIndex, totalPages) => {
@@ -450,7 +449,7 @@ export default function BookRead() {
         <Text style={styles.pageIndicator}>
           Page {currentPage + 1} of {chunks.length}
         </Text>
-        
+
         {currentPage >= chunks.length - 1 ? (
           // Show Home Icon at last page
           <TouchableOpacity
