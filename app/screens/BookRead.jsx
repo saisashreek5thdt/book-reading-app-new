@@ -548,12 +548,20 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     width: "100%",
   },
+  // image: {
+  //   width: "100%",
+  //   height: "20%",
+  //   borderRadius: 5,
+  //   marginBottom: 16,
+  // },
   image: {
-    width: "100%",
-    height: 200,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
+  width: "100%",
+  height: undefined, // Let height adjust automatically
+  aspectRatio: 16 / 9, // Set a default aspect ratio (you can change this if needed)
+  resizeMode: 'contain', // Ensures the whole image fits without being cut
+  borderRadius: 5,
+  marginBottom: 16,
+},
   paginationControls: {
     flexDirection: "row",
     justifyContent: "space-between",

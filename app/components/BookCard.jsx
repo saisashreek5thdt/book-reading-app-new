@@ -7,12 +7,16 @@ export default function BookCard({ title, author, coverImage, onPress }) {
 
   return (
     <TouchableOpacity style={styles.bookCardContainer} onPress={onPress}>
-      <Image
-        style={styles.bookCoverImg}
-        // source={require("../../assets/images/book.jpg")}
-        source={{ uri: coverImage.trim() }}
-        resizeMode="cover"
-      />
+      {coverImage ? (
+        <Image
+          style={styles.bookCoverImg}
+          source={{ uri: coverImage.trim() }}
+          resizeMode="cover"
+        />
+      ) : (
+        <Text style={{ color: "red" }}>No image</Text>
+      )}
+
       <Text
         style={[
           styles.bookCardTitle,
