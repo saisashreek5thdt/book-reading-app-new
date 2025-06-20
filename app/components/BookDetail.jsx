@@ -104,13 +104,13 @@ export default function BookDetail({ navigation }) {
         <View style={styles.imageContainer}>
           <Image
             style={styles.bookImage}
-            source={
-              typeof book.coverImage === "string" &&
-              book.coverImage.startsWith("https")
-                ? { uri: book.coverImage }
-                : typeof book.coverImage === "number"
-                ? book.imageURL // already a require()
-                : require("../../assets/images/book.jpg") // fallback or local static asset
+            source={ { uri: book.coverImage.trim() }
+              // typeof book.coverImage === "string" &&
+              // book.coverImage.startsWith("https")
+              //   ? { uri: book.coverImage }
+              //   : typeof book.coverImage === "number"
+              //   ? book.imageURL // already a require()
+              //   : require("../../assets/images/book.jpg") // fallback or local static asset
             }
           />
         </View>

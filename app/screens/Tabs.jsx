@@ -6,6 +6,7 @@ import BookDetail from "../components/BookDetail";
 import colors from "../utils/colors";
 import { useTheme } from "../utils/theme";
 import AppInfo from "./AppInfo";
+import BookGridView from "./BookGridView";
 import Bookmark from "./Bookmark";
 import BookRead from "./BookRead";
 import Categories from "./Categories";
@@ -21,6 +22,7 @@ function HomeStack() {
       <Stack.Screen name="HomeScreen" component={Home} />
       <Stack.Screen name="BookDetail" component={BookDetail} />
       <Stack.Screen name="BookRead" component={BookRead} />
+      <Stack.Screen name="BookGridView" component={BookGridView} />
     </Stack.Navigator>
   );
 }
@@ -50,7 +52,7 @@ export function Tabs() {
       }}
     >
       <Tab.Screen
-        name="TabHome"
+        name="Home"
         component={HomeStack}
         options={{
           tabBarIcon: ({ size, color }) => (

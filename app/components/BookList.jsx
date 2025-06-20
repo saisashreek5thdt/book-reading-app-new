@@ -20,7 +20,15 @@ export default function BookList({ title, books }) {
         >
           {title}
         </Text>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("BookGridView", {
+              title: title,        // e.g., "Trending"
+              books: books,        // list of trending or recommended books
+              type: title.toLowerCase(), // optional: 'trending' or 'recommended'
+            })
+          }
+        >
           <Text
             style={[styles.bookTextBTN, { color: currentTheme.bookTitleBtn }]}
           >
