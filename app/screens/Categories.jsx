@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import {
   FlatList,
@@ -6,59 +7,42 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import BookCard from "../components/BookCard";
 
-const categories = [
-  "All",
-  "Biography",
-  "Children",
-  "Fantasy",
-  "Fiction",
-  "Horror",
-  "Mystery",
-];
-
-const mockStories = [
-  {
-    id: "1",
-    title: "The Wizard's Tower",
-    category: "Fantasy",
-  },
-  {
-    id: "2",
-    title: "Haunted Nights",
-    category: "Horror",
-  },
-  {
-    id: "3",
-    title: "The Young Hero",
-    category: "Children",
-  },
-  {
-    id: "4",
-    title: "Life of Tesla",
-    category: "Biography",
-  },
-  {
-    id: "5",
-    title: "Fantasy World",
-    category: "Fantasy",
-  },
-];
 
 export default function CategoryScreen() {
+  const [books, setBooks] = useState([]);
+  const [categories, setCategories] = useState(["All"]);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [filteredStories, setFilteredStories] = useState([]);
+  const navigation = useNavigation();
 
+  // Fetch books and categories from API
   useEffect(() => {
-    if (selectedCategory === "All") {
-      setFilteredStories(mockStories);
-    } else {
-      const filtered = mockStories.filter(
-        (story) => story.category === selectedCategory
-      );
-      setFilteredStories(filtered);
-    }
-  }, [selectedCategory]);
+    fetch("https://book-reading-app-api-o9ts.vercel.app/api/books")
+      .then((res) => res.json())
+      .then((data) => {
+        setBooks(data);
+
+        // Extract unique category names
+        const allCats = [
+          "All",
+          ...new Set(
+            data.flatMap((book) =>
+              book.categories.map((cat) => cat.name)
+            )
+          ),
+        ];
+        setCategories(allCats);
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
+  // Filter books based on selected category
+  const filteredBooks = selectedCategory === "All"
+    ? books
+    : books.filter((book) =>
+      book.categories.some((cat) => cat.name === selectedCategory)
+    );
 
   const renderCategory = (category) => (
     <TouchableOpacity
@@ -80,35 +64,51 @@ export default function CategoryScreen() {
     </TouchableOpacity>
   );
 
-  const renderStory = ({ item }) => (
-    <View style={styles.storyCard}>
-      <Text style={styles.storyTitle}>{item.title}</Text>
-    </View>
+  const renderBook = ({ item }) => (
+    <BookCard
+      title={item.title}
+      author={item.author}
+      coverImage={item.coverImage}
+      onPress={() =>
+        // navigation.navigate("BookDetail", {
+        //   book: item,
+        // })
+        navigation.navigate("Home", {
+          screen: "BookDetail",
+           params: { book: item },
+        })
+      }
+
+    />
   );
 
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Categories</Text>
-      <View style={styles.categoriesContainer}>
-        <FlatList
-          data={categories}
-          renderItem={({ item }) => renderCategory(item)}
-          horizontal
-          keyExtractor={(item) => item}
-          showsHorizontalScrollIndicator={false}
-        />
-      </View>
 
-      {filteredStories.length === 0 ? (
+      {/* Categories List */}
+      <FlatList
+        data={categories}
+        renderItem={({ item }) => renderCategory(item)}
+        horizontal
+        keyExtractor={(item) => item}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.categoriesContainer}
+      />
+
+      {/* Books Grid */}
+      {filteredBooks.length === 0 ? (
         <Text style={styles.noStoriesText}>
-          No stories found for <Text style={{ fontWeight: "bold" }}>{selectedCategory}</Text>.
+          No books found for{" "}
+          <Text style={{ fontWeight: "bold" }}>{selectedCategory}</Text>.
         </Text>
       ) : (
         <FlatList
-          data={filteredStories}
-          keyExtractor={(item) => item.id}
-          renderItem={renderStory}
-          contentContainerStyle={styles.storyList}
+          data={filteredBooks}
+          renderItem={renderBook}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={2}
+          contentContainerStyle={styles.booksGrid}
         />
       )}
     </View>
@@ -117,7 +117,6 @@ export default function CategoryScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "#e6f8ff",
     paddingTop: 40,
     paddingHorizontal: 16,
@@ -137,6 +136,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: "#eee",
     marginRight: 10,
+    height: 40,
   },
   selectedCategoryButton: {
     backgroundColor: "#f97316",
@@ -148,23 +148,13 @@ const styles = StyleSheet.create({
   selectedCategoryText: {
     color: "#fff",
   },
-  storyCard: {
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-  },
-  storyTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
+  booksGrid: {
+    paddingBottom: 20,
   },
   noStoriesText: {
     fontSize: 16,
     color: "#333",
     textAlign: "center",
     marginTop: 40,
-  },
-  storyList: {
-    paddingBottom: 40,
   },
 });

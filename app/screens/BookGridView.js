@@ -43,8 +43,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
     paddingHorizontal: 20,
     marginBottom: 10,
     gap: 10,
@@ -54,6 +52,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
     paddingHorizontal: 10,
     paddingBottom: 40,
   },
