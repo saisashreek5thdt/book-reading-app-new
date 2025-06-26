@@ -46,15 +46,18 @@ export default {
       "expo-secure-store",
     ],
     extra: {
-      "eas": {
-        "projectId": "311ee653-61cf-4062-95ae-9fc879b8432e"
+      eas: {
+        projectId: "311ee653-61cf-4062-95ae-9fc879b8432e",
       },
       AUTH_LOGIN: process.env.AUTH_LOGIN,
       AUTH_REGISTER: process.env.AUTH_REGISTER,
       CATE_DATA: process.env.CATE_DATA,
       AUTH_LOGOUT: process.env.AUTH_LOGOUT,
-      USER_DATA: process.env.USER_DATA
+      USER_DATA: process.env.USER_DATA,
     },
     owner: "saisashreekd1992",
+    updates: {
+      fallbackToCacheTimeout: 1, // Load update immediately
+    },
   },
 };
