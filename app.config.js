@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "book-reading-app-new",
     slug: "book-reading-app-new",
-    version: "1.0.9",
+    version: "1.0.9.1",
     orientation: "portrait",
     icon: "./assets/images/book.jpg",
     scheme: "bookreadingappnew",
@@ -34,6 +34,7 @@ export default {
     },
     plugins: [
       "expo-router",
+      "expo-web-browser",
       [
         "expo-splash-screen",
         {
@@ -58,6 +59,10 @@ export default {
     owner: "saisashreekd1992",
     updates: {
       fallbackToCacheTimeout: 1, // Load update immediately
+    },
+    url: "https://u.expo.dev/311ee653-61cf-4062-95ae-9fc879b8432e",
+    runtimeVersion: {
+      policy: "appVersion",
     },
   },
 };
