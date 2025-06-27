@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "book-reading-app-new",
     slug: "book-reading-app-new",
-    version: "1.0.8",
+    version: "1.0.9",
     orientation: "portrait",
     icon: "./assets/images/book.jpg",
     scheme: "bookreadingappnew",
