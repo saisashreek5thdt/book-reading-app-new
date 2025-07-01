@@ -47,6 +47,7 @@ export default function BookRead() {
   const [highlightedKey, setHighlightedKey] = useState(null);
   const [availableVoices, setAvailableVoices] = useState([]);
   const [selectedVoice, setSelectedVoice] = useState(null);
+  const [imageErrorMap, setImageErrorMap] = useState({});
 
   // Load available voices
   // useEffect(() => {
@@ -418,14 +419,16 @@ export default function BookRead() {
             <Image
               key={item.key}
               source={
-                typeof item.content === "number"
+                imageErrorMap[item.key]
+                  ? require("../../assets/images/book.jpg")
+                  : typeof item.content === "number"
                   ? item.content
                   : { uri: item.content.trim() }
               }
               style={styles.image}
               resizeMode="cover"
-              onError={(e) =>
-                console.log("Image load error:", e.nativeEvent.error)
+              onError={() =>
+                setImageErrorMap((prev) => ({ ...prev, [item.key]: true }))
               }
             />
           )
@@ -554,13 +557,13 @@ const styles = StyleSheet.create({
   //   marginBottom: 16,
   // },
   image: {
-  width: "100%",
-  height: undefined, // Let height adjust automatically
-  aspectRatio: 16 / 9, // Set a default aspect ratio (you can change this if needed)
-  resizeMode: 'contain', // Ensures the whole image fits without being cut
-  borderRadius: 5,
-  marginBottom: 16,
-},
+    width: "100%",
+    height: undefined, // Let height adjust automatically
+    aspectRatio: 16 / 9, // Set a default aspect ratio (you can change this if needed)
+    resizeMode: "contain", // Ensures the whole image fits without being cut
+    borderRadius: 5,
+    marginBottom: 16,
+  },
   paginationControls: {
     flexDirection: "row",
     justifyContent: "space-between",

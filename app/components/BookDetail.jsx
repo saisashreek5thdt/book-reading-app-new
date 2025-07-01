@@ -15,6 +15,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useBookmarks } from "../utils/BookMarkContext";
 import colors from "../utils/colors";
 import { useTheme } from "../utils/theme";
+// Add this import
+import { useState } from "react";
+
 
 export default function BookDetail({ navigation }) {
   const { bookmarks, addBookmark } = useBookmarks();
@@ -22,6 +25,11 @@ export default function BookDetail({ navigation }) {
   const { book = {} } = route?.params || {};
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const [imageError, setImageError] = useState(false);
+
+  const imageUri = !imageError && book.coverImage?.trim()
+    ? { uri: book.coverImage.trim() }
+    : require("../../assets/images/book.jpg"); // 📌 Make sure fallback image exists
 
   if (!book || !book.coverImage) {
     return (
@@ -104,14 +112,9 @@ export default function BookDetail({ navigation }) {
         <View style={styles.imageContainer}>
           <Image
             style={styles.bookImage}
-            source={ { uri: book.coverImage.trim() }
-              // typeof book.coverImage === "string" &&
-              // book.coverImage.startsWith("https")
-              //   ? { uri: book.coverImage }
-              //   : typeof book.coverImage === "number"
-              //   ? book.imageURL // already a require()
-              //   : require("../../assets/images/book.jpg") // fallback or local static asset
-            }
+            source={imageUri}
+            onError={() => setImageError(true)}
+            resizeMode="cover"
           />
         </View>
 

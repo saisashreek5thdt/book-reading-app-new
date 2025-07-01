@@ -1,16 +1,23 @@
+import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity } from "react-native";
 import colors from "../utils/colors";
 import { useTheme } from "../utils/theme";
 
 export default function BookCard({ title, author, coverImage, onPress }) {
   const { theme } = useTheme();
+  const [imageError, setImageError] = useState(false);
+
+  const imageUri = !imageError && coverImage?.trim()
+    ? { uri: coverImage.trim() }
+    : require("../../assets/images/book.jpg"); // 📌 Make sure fallback image exists
 
   return (
     <TouchableOpacity style={styles.bookCardContainer} onPress={onPress}>
       {coverImage ? (
         <Image
           style={styles.bookCoverImg}
-          source={{ uri: coverImage.trim() }}
+          source={imageUri}
+          onError={() => setImageError(true)}
           resizeMode="cover"
         />
       ) : (
